@@ -9,5 +9,5 @@ export const encryptPassword = (username: string, password: string) => {
   return sha256(username + password + salt);
 };
 export const localStorageTokenKey = 'family-photos-wapp-token';
-// export const apiRootURL = 'http://riyadshauk.com/photosapi';
-export const apiRootURL = 'http://localhost:8080';
+export const apiRootURL = 'http://riyadshauk.com/photosapi';
+// export const apiRootURL = 'http://localhost:8080';

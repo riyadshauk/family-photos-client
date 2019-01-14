@@ -9,7 +9,6 @@ import styles from './PhotoFeed.css';
 type Props = {};
 
 type State = {
-  photos: Array<any>, // @todo update Array<any> as I figure it out...
   photosListingList: Array<string>,
   photosList: Array<any>
 };
@@ -22,7 +21,6 @@ class PhotoFeed extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      photos: [],
       photosListingList: [],
       photosList: []
     };
@@ -59,7 +57,7 @@ class PhotoFeed extends Component<Props, State> {
         this.setState(prevState => ({
           photosList: [
             ...prevState.photosList, 
-            <img className={styles.photos} onLoad={this.handleImage} onError={this.handleImage} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
+            <img key={prevState.photosList.length} className={styles.photos} onLoad={this.handleImage} onError={this.handleImage} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
           ]
         }));
       })

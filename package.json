@@ -28,5 +28,6 @@
   ],
   "devDependencies": {
     "flow-bin": "^0.89.0"
-  }
+  },
+  "homepage": "http://riyadshauk.com/photos"
 }
