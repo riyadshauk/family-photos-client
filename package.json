@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "API_URL=http://localhost:8080 react-scripts start",
-    "start": "react-scripts start",
+    "start": "STAGING_API_ROOT_URL=http://localhost:8080 env-cmd .env.staging react-scripts start",
     "build": "env-cmd .env.production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
