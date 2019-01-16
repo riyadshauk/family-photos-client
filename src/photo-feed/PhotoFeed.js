@@ -54,7 +54,7 @@ class PhotoFeed extends Component<Props, State> {
   }
 
   render() {
-    console.log('this.state.photosListing:', this.state.photosListing);
+    logger('this.state.photosListing:', this.state.photosListing);
     return (
       <div className="photofeed">
         <h3>PhotoFeed</h3>

@@ -11,6 +11,6 @@ export const encryptPassword = (username: string, password: string) => {
 };
 export const localStorageTokenKey = 'family-photos-wapp-token';
 export const apiRootURL = process.env.STAGING_API_ROOT_URL || 'https://riyadshauk.com/photosapi';
-// export const apiRootURL = 'http://localhost:8080';
+// export const apiRootURL = 'http://localhost:8081';
 
-export const logger = (...args: any) => process.env.NODE_ENV !== 'production' && !process.env.API_ROOT_URL ? console.log(args) : undefined;
+export const logger = (...args: any) => process.env.NODE_ENV !== 'production' || !process.env.STAGING_API_ROOT_URL ? console.log(args) : undefined;
