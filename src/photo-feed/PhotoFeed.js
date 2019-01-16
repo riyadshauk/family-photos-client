@@ -2,15 +2,15 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
 
-import { apiRootURL } from '../helpers';
+import { apiRootURL, logger } from '../helpers';
 import Authentication from '../session-related/Authentication';
 import styles from './PhotoFeed.css';
+import LazyImage from './LazyImage';
 
 type Props = {};
 
 type State = {
-  photosListingList: Array<string>,
-  photosList: Array<any>
+  photosListing: Array<string>
 };
 
 /**
@@ -21,17 +21,16 @@ class PhotoFeed extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      photosListingList: [],
-      photosList: []
+      photosListing: []
     };
-    this.getPhotos();
   }
 
   /**
    * @todo extract this to separate component (do EXIF stuff in here)
    */
-  handleImage() {
-    
+  handleImage(blah: any) {
+    logger('handleImage fired! with blah:', blah, 'typeof blah:', typeof blah);
+    // @todo
   }
 
   /**
@@ -41,35 +40,32 @@ class PhotoFeed extends Component<Props, State> {
    * @see https://github.com/gomfunkel/node-exif (@todo seperate these tasks out into an ExifExtractor component or something)
    */
   getPhotos() {
-    console.log('getPhotos with token:', Authentication.getToken());
+    logger('getPhotos with token:', Authentication.getToken());
     axios.get(
       `${apiRootURL}/photos/demo?q=listing`,
       { headers: { 'Authorization': `Bearer ${Authentication.getToken()}` } }
     ).then((res) => {
-      console.log('PhotoFeed getPhotos res:', res);
-      const photoListingNamesList = res.data.listing.map((fileName, idx) =>
-        <li key={idx}>{fileName}</li>
-      );
-      this.setState({ photosListingList: photoListingNamesList });
-
-      res.data.listing.forEach((fileName) => {
-
-        this.setState(prevState => ({
-          photosList: [
-            ...prevState.photosList, 
-            <img key={prevState.photosList.length} className={styles.photos} onLoad={this.handleImage} onError={this.handleImage} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
-          ]
-        }));
-      })
+      this.setState({ photosListing: res.data.listing });
     });
   }
+
+  componentDidMount() {
+    this.getPhotos();
+  }
+
   render() {
+    console.log('this.state.photosListing:', this.state.photosListing);
     return (
-      <Fragment>
+      <div className="photofeed">
         <h3>PhotoFeed</h3>
-        <div>{ this.state.photosList }</div>
-        <div>{ this.state.photosListingList }</div>
-      </Fragment>
+        {this.state.photosListing.map((fileName, idx) => {
+          return (
+              <Fragment key={idx}>
+                <LazyImage className={styles.photos} onLoad={this.handleImage} onError={this.handleImage} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
+              </Fragment>
+            );
+        })}
+      </div>
     );
   }
 };

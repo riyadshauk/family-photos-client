@@ -1,4 +1,8 @@
 :local(.photos) {
-  width: 50%;
+  /* width: 50%;
+  min-height: 200px;
   height: inherit;
+  float: left; */
+  width: inherit;
+  height: 500px;
 }
