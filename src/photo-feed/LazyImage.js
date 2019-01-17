@@ -1,23 +1,44 @@
 // @flow
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { errorLogger, fetchEXIFData, getOrientationDegrees } from '../helpers';
 type Props = {
   src: string,
   className: string,
-  onLoad: Function,
-  onError: Function,
 };
-type State = {};
+type State = {
+  orientation: number,
+  date: string
+};
 /**
  * @see https://medium.com/walmartlabs/lazy-loading-images-intersectionobserver-8c5bff730920
  */
 class LazyImage extends Component<Props, State> {
   observer: ?IntersectionObserver;
   element: HTMLImageElement;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      orientation: 0,
+      date: ''
+    };
+  }
   componentDidMount() {
     this.observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+      entries.forEach(async (entry) => {
         const { isIntersecting } = entry;
         if (isIntersecting) {
+          try {
+            const imageURL = this.props.src;
+            const exifData = await fetchEXIFData(imageURL + `&q=exif`);
+            if (exifData.image && exifData.exif) {
+              const orientation = getOrientationDegrees(exifData.image.Orientation);
+              const date = exifData.exif.DateTimeOriginal;
+              this.setState({ orientation, date });
+            }
+          } catch (err) {
+            errorLogger(err.stack);
+          }
           this.element.src = this.props.src;
           this.observer = this.observer.disconnect(); // sets this.observer to undefined
         }
@@ -28,15 +49,17 @@ class LazyImage extends Component<Props, State> {
       rootMargin: '0px 0px 200px 0px', // start loading before scrolling the image into the viewport
       threshold: 1.0,
     });
-
     this.observer.observe(this.element);
   }
   render() {
-    const { className, onLoad, onError } = this.props;
+    const { className } = this.props;
     return (
-      <div> {/* ensure each image is on new line so that they aren't all in the viewport at once (@todo more elegantly?) */}
-        <img className={className} onLoad={onLoad} onError={onError} ref={el => this.element = el} />
-      </div>
+      <Fragment>
+        <p>
+          Date: {this.state.date}
+        </p>
+        <img alt={this.state.date} className={className} style={{ transform: `rotate(${360 - this.state.orientation}deg)`, height: '500px' }} ref={el => this.element = el} />
+      </Fragment>
     );
   }
 }

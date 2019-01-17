@@ -1,8 +1,14 @@
+/* https://stackoverflow.com/questions/14142378/how-can-i-fill-a-div-with-an-image-while-keeping-it-proportional#answer-20341542 */
 :local(.photos) {
-  /* width: 50%;
-  min-height: 200px;
-  height: inherit;
-  float: left; */
   width: inherit;
+  flex-shrink: 0;
+  min-height: 100%
+}
+:local(.photoContainer) {
   height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-top: 2px;
 }

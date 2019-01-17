@@ -1,5 +1,5 @@
 // @flow
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
 
 import { apiRootURL, logger } from '../helpers';
@@ -13,10 +13,6 @@ type State = {
   photosListing: Array<string>
 };
 
-/**
- * @todo front-end load photos here (see async best practices?)
- * @todo hook up to back-end, and load photos from my db / api here (after getting any photos up)
- */
 class PhotoFeed extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -26,18 +22,7 @@ class PhotoFeed extends Component<Props, State> {
   }
 
   /**
-   * @todo extract this to separate component (do EXIF stuff in here)
-   */
-  handleImage(blah: any) {
-    logger('handleImage fired! with blah:', blah, 'typeof blah:', typeof blah);
-    // @todo
-  }
-
-  /**
-   * @todo set up req.query on backend to getAllPhotoNames, getSpecificPhoto
-   * @todo use EXIF library to extract EXIF for each image (once loaded), then rotate each image, accordingly
-   * @todo also, display the EXIF data for each image on front-end
-   * @see https://github.com/gomfunkel/node-exif (@todo seperate these tasks out into an ExifExtractor component or something)
+   * @todo display the EXIF data for each image on front-end
    */
   getPhotos() {
     logger('getPhotos with token:', Authentication.getToken());
@@ -45,7 +30,11 @@ class PhotoFeed extends Component<Props, State> {
       `${apiRootURL}/photos/demo?q=listing`,
       { headers: { 'Authorization': `Bearer ${Authentication.getToken()}` } }
     ).then((res) => {
-      this.setState({ photosListing: res.data.listing });
+      /**
+       * @todo support .MOV etc down the road (look into streaming for that, ie)
+       */
+      const listing = res.data.listing.filter((filePath: string) => filePath.indexOf('.JPG') > 0 || filePath.indexOf('.jpg') > 0 ? true : false);
+      this.setState({ photosListing: listing });
     });
   }
 
@@ -58,11 +47,30 @@ class PhotoFeed extends Component<Props, State> {
     return (
       <div className="photofeed">
         <h3>PhotoFeed</h3>
+        <p>Some current Todos:</p>
+        <li>
+          Add upload functionality
+        </li>
+        <li>
+          Add comment + like functionality
+        </li>
+        <li>
+          Add some readable EXIF data for user
+        </li>
+        <li>
+          Store (above) relevant data in db (and make more API endpoints)
+        </li>
+        <li>
+          Load thumbnail or low-quality images first, then higher-res upon click
+        </li>
+        <li>
+          Consider using PJPG
+        </li>
         {this.state.photosListing.map((fileName, idx) => {
           return (
-              <Fragment key={idx}>
-                <LazyImage className={styles.photos} onLoad={this.handleImage} onError={this.handleImage} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
-              </Fragment>
+              <div className={styles.photoContainer} key={idx}>
+                <LazyImage className={styles.photos} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
+              </div>
             );
         })}
       </div>
