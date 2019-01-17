@@ -53,12 +53,21 @@ class LazyImage extends Component<Props, State> {
   }
   render() {
     const { className } = this.props;
+    const transformRotationValue = `rotate(${360 - this.state.orientation}deg)`;
+    const styles = {
+      '-webkit-transform': transformRotationValue,
+      '-moz-transform':    transformRotationValue,
+      '-ms-transform':     transformRotationValue,
+      '-o-transform':      transformRotationValue,
+      transform:           transformRotationValue,
+      height:              '500px',
+    }
     return (
       <Fragment>
         <p>
           Date: {this.state.date}
         </p>
-        <img alt={this.state.date} className={className} style={{ transform: `rotate(${360 - this.state.orientation}deg)`, height: '500px' }} ref={el => this.element = el} />
+        <img alt={this.state.date} className={className} style={styles} ref={el => this.element = el} />
       </Fragment>
     );
   }
