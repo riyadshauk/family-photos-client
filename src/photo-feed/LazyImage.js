@@ -1,7 +1,6 @@
 // @flow
 import React, { Component, Fragment } from 'react';
 import { errorLogger, fetchEXIFData, getOrientationDegrees } from '../helpers';
-// import stylesheet from './LazyImage.css';
 type Props = {
   src: string,
   className: string,
