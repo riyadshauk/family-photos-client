@@ -1,6 +1,7 @@
 // @flow
 import React, { Component, Fragment } from 'react';
 import { errorLogger, fetchEXIFData, getOrientationDegrees } from '../helpers';
+// import stylesheet from './LazyImage.css';
 type Props = {
   src: string,
   className: string,
@@ -52,22 +53,25 @@ class LazyImage extends Component<Props, State> {
     this.observer.observe(this.element);
   }
   render() {
-    const { className } = this.props;
-    const transformRotationValue = `rotate(${360 - this.state.orientation}deg)`;
+    let { className } = this.props;
+    const rotationValue = 360 - this.state.orientation;
+    const transformRotationValue = `rotate(${rotationValue}deg)`;
     const styles = {
-      '-webkit-transform': transformRotationValue,
-      '-moz-transform':    transformRotationValue,
-      '-ms-transform':     transformRotationValue,
-      '-o-transform':      transformRotationValue,
-      transform:           transformRotationValue,
-      height:              '500px',
+      // display:          'inline-block',
+      WebkitTransform:  transformRotationValue,
+      MozTransform:     transformRotationValue,
+      msTransform:      transformRotationValue,
+      OTransform:       transformRotationValue,
+      transform:        transformRotationValue,
+      height:           '500px',
+      // imageOrientation: 'from-image',
     }
     return (
       <Fragment>
         <p>
           Date: {this.state.date}
         </p>
-        <img alt={this.state.date} className={className} style={styles} ref={el => this.element = el} />
+        <img alt={this.state.date} className={className /*+ ` rotate${360 - this.state.orientation}`*/} style={styles} ref={el => this.element = el} />
       </Fragment>
     );
   }
