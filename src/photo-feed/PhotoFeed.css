@@ -12,3 +12,16 @@
   overflow: hidden;
   margin-top: 2px;
 }
+:local(.videoContainer) {
+  /* height: 500px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-top: 2px;
+}
+video {
+  width: 850px;
+  max-width: 100%;
+  height: auto;
+}

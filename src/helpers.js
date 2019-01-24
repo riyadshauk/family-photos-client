@@ -3,6 +3,7 @@ import { sha256 } from 'js-sha256';
 import process from 'process';
 import axios from 'axios';
 import Authentication from './session-related/Authentication';
+import { fileURLToPath } from 'url';
 
 const inProduction = true; // catch-all @todo get from env in better way
 
@@ -67,4 +68,51 @@ const extractImageOrientation = async (imageURL: string) => {
       reject(new Error('Orientation could not be determined.'));
     }
   });
+};
+
+const VIDEO = 'video';
+const videoMIMEType = {
+  'flv':    `${VIDEO}/flv`,
+  'mp4':    `${VIDEO}/mp4`,
+  'm4v':    function() { return this.mp4 },
+  'm3u8':   `application/x-mpegURL`,
+  'ts':     `${VIDEO}/MP2T`,
+  '3gp':    `${VIDEO}/3gpp`,
+  'mov':    function() { return this.mp4 }, // `${VIDEO}/quicktime`,
+  'avi':    `${VIDEO}/x-msvideo`,
+  'wmv':    `${VIDEO}/x-ms-wmv`,
 }
+
+const fileContainsValidExtension = (filePath: string, validExtensions: string[]) => {
+  for (let i = 0; i < validExtensions.length; i++) {
+    if (filePath.indexOf(`.${validExtensions[i]}`) > -1 || filePath.indexOf(`.${validExtensions[i].toUpperCase()}`) > -1) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export const isValidExtension = (filePath: string) => {
+  const validExtensions = ['jpg', 'jpeg', ...Object.keys(videoMIMEType)];
+  return fileContainsValidExtension(filePath.substring(filePath.length - 5), validExtensions);
+}
+
+export const isJpeg = (filePath: string) => fileContainsValidExtension(filePath.substring(filePath.length - 5), ['jpg']);
+
+export const isVideo = (filePath: string) => {
+  const videoExtensions = Object.keys(videoMIMEType);
+  return fileContainsValidExtension(filePath.substring(filePath.length - 5), videoExtensions);
+};
+
+export const getVideoMIMEType = (filePath: string): string => {
+  const ending = filePath.substring(filePath.length - 5);
+  const videoMIMETypes = Object.keys(videoMIMEType);
+  for (let i = 0; i < videoMIMETypes.length; i++) {
+    if (ending.includes(videoMIMETypes[i])) {
+      logger('videoMIMEType[videoMIMETypes[i]]:', videoMIMEType[videoMIMETypes[i]]);
+      return videoMIMEType[videoMIMETypes[i]];
+      // return 'video/quicktime';
+    }
+  }
+  return '';
+};

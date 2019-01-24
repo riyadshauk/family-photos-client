@@ -2,10 +2,11 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { apiRootURL, logger } from '../helpers';
+import { apiRootURL, logger, isVideo, isValidExtension, getVideoMIMEType } from '../helpers';
 import Authentication from '../session-related/Authentication';
 import styles from './PhotoFeed.css';
 import LazyImage from './LazyImage';
+import UploadPhoto from './UploadPhoto';
 
 type Props = {};
 
@@ -33,7 +34,7 @@ class PhotoFeed extends Component<Props, State> {
       /**
        * @todo support .MOV etc down the road (look into streaming for that, ie)
        */
-      const listing = res.data.listing.filter((filePath: string) => filePath.indexOf('.JPG') > 0 || filePath.indexOf('.jpg') > 0 ? true : false);
+      const listing = res.data.listing.filter((filePath: string) => isValidExtension(filePath) ? true : false);
       this.setState({ photosListing: listing });
     });
   }
@@ -48,9 +49,9 @@ class PhotoFeed extends Component<Props, State> {
       <div className="photofeed">
         <h3>PhotoFeed</h3>
         <p>Some current Todos:</p>
-        <li>
+        {/* <li>
           Add upload functionality
-        </li>
+        </li> */}
         <li>
           Add comment + like functionality
         </li>
@@ -66,10 +67,25 @@ class PhotoFeed extends Component<Props, State> {
         <li>
           Consider using PJPG
         </li>
+        <UploadPhoto />
         {this.state.photosListing.map((fileName, idx) => {
+          if (isVideo(fileName)) {
+            const videoStyles = Object.assign({}, styles.photoContainer, styles.photos);
+            // videoStyles.height = '100%';
+            videoStyles.width = '200px';
+            return (
+              // <video controls>
+              //   {/* <source style={styles} type={this.props.videoMIMEType} ref={el => this.element = el} /> */}
+              //   <source type="video/mp4" src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`} />
+              // </video>
+              <div className={styles.videoContainer} key={idx}>
+                <LazyImage className={styles.videoContainer} isVideo={isVideo(fileName)} videoMIMEType={getVideoMIMEType(fileName)} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
+              </div>
+            );
+          }
           return (
               <div className={styles.photoContainer} key={idx}>
-                <LazyImage className={styles.photos} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
+                <LazyImage className={styles.photos} isVideo={isVideo(fileName)} videoMIMEType={getVideoMIMEType(fileName)} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
               </div>
             );
         })}
