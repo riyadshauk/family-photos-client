@@ -49,9 +49,6 @@ class PhotoFeed extends Component<Props, State> {
       <div className="photofeed">
         <h3>PhotoFeed</h3>
         <p>Some current Todos:</p>
-        {/* <li>
-          Add upload functionality
-        </li> */}
         <li>
           Add comment + like functionality
         </li>
@@ -70,14 +67,7 @@ class PhotoFeed extends Component<Props, State> {
         <UploadPhoto />
         {this.state.photosListing.map((fileName, idx) => {
           if (isVideo(fileName)) {
-            const videoStyles = Object.assign({}, styles.photoContainer, styles.photos);
-            // videoStyles.height = '100%';
-            videoStyles.width = '200px';
             return (
-              // <video controls>
-              //   {/* <source style={styles} type={this.props.videoMIMEType} ref={el => this.element = el} /> */}
-              //   <source type="video/mp4" src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`} />
-              // </video>
               <div className={styles.videoContainer} key={idx}>
                 <LazyImage className={styles.videoContainer} isVideo={isVideo(fileName)} videoMIMEType={getVideoMIMEType(fileName)} src={`${apiRootURL}/photos/demo/${fileName}?token=${Authentication.getToken()}`}/>
               </div>

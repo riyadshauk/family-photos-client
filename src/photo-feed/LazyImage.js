@@ -31,20 +31,17 @@ class LazyImage extends Component<Props, State> {
       entries.forEach(async (entry) => {
         const { isIntersecting } = entry;
         if (isIntersecting) {
-          // console.log('this.props.src:', this.props.src);
-          // if (!this.props.isVideo) {
-            try {
-              const imageURL = this.props.src;
-              const exifData = await fetchEXIFData(imageURL + `&q=exif`);
-              if (exifData.image && exifData.exif) {
-                const orientation = getOrientationDegrees(exifData.image.Orientation);
-                const date = exifData.exif.DateTimeOriginal;
-                this.setState({ orientation, date });
-              }
-            } catch (err) {
-              errorLogger(err.stack);
+          try {
+            const imageURL = this.props.src;
+            const exifData = await fetchEXIFData(imageURL + `&q=exif`);
+            if (exifData.image && exifData.exif) {
+              const orientation = getOrientationDegrees(exifData.image.Orientation);
+              const date = exifData.exif.DateTimeOriginal;
+              this.setState({ orientation, date });
             }
-          // }
+          } catch (err) {
+            errorLogger(err.stack);
+          }
           this.element.src = this.props.src;
           this.observer = this.observer.disconnect(); // sets this.observer to undefined
         }
@@ -67,25 +64,13 @@ class LazyImage extends Component<Props, State> {
       styles.transform = `rotate(${360 - this.state.orientation}deg)`;
     }
     if (this.props.isVideo) {
-      // return null;
-      const videoStyles = {
-        // maxWidth: '100%',
-        // width: '100%',
-        
-        // maxWidth:  '100%',
-        // height:   'auto',
-        // display:  'block',
-        // margin: '0 auto',
-      }
       return (
         <Fragment>
           <p>
             Date: {this.state.date}
           </p>
           <video controls>
-            {/* <source style={styles} type={this.props.videoMIMEType} ref={el => this.element = el} /> */}
-            {/* <source style={styles} type="video/mp4" ref={el => this.element = el} /> */}
-            <source style={videoStyles} type={this.props.videoMIMEType} src={this.props.src} />
+            <source type={this.props.videoMIMEType} src={this.props.src} />
           </video>
         </Fragment>
       );

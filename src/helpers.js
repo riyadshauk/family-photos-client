@@ -109,9 +109,7 @@ export const getVideoMIMEType = (filePath: string): string => {
   const videoMIMETypes = Object.keys(videoMIMEType);
   for (let i = 0; i < videoMIMETypes.length; i++) {
     if (ending.includes(videoMIMETypes[i])) {
-      logger('videoMIMEType[videoMIMETypes[i]]:', videoMIMEType[videoMIMETypes[i]]);
       return videoMIMEType[videoMIMETypes[i]];
-      // return 'video/quicktime';
     }
   }
   return '';

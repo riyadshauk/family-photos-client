@@ -31,6 +31,7 @@ class UploadPhoto extends Component<Props, State> {
 
   uploadFile(file: File) {
     const fileName = this.state.file ? this.state.file.name : '';
+    logger('uploadFile fileName:', fileName);
     if (!fileName) {
       return new Promise((resolve, reject) => reject('Error: It seems no file has been selected for upload.'));
     }
